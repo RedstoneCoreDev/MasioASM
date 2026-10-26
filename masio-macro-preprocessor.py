@@ -142,9 +142,9 @@ def transform():
 
     with open(file_in, "r") as source, open(file_out, "w") as dest:
         in_start = False
+        first_hit = 0
         for line in source:
             elements = line.split()
-            print(elements)
 
             indent = 4 * " "
 
@@ -161,6 +161,12 @@ def transform():
                 dest.write(final)
 
             else:
+                if first_hit == 0:
+                    first_hit = 1
+                if first_hit == 1:
+                    first_hit = -1
+                    dest.write("section .text\n")
+                    dest.write("global _start\n\n")
                 in_start, output = expand_macros(elements, line, indent, in_start)
                 dest.write("".join(output))
 
@@ -188,7 +194,6 @@ def transform():
                 dest.write(f'{indent}{key} db "{value}", 0')
 
 
-# run nasm commands (LINUX ONLY) to compile the produced nasm file
 def compile():
     import subprocess
     import platform
