@@ -1,6 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 80" width="100%" height="80">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 65" width="100%" height="65">
   <defs>
-    <!-- Gradient for ASM text -->
     <linearGradient id="asmGradient" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#38bdf8" />
       <stop offset="100%" stop-color="#818cf8" />
@@ -24,8 +23,7 @@
     }
   </style>
 
-  <!-- Logo Content -->
-  <text x="10" y="55">
+  <text x="0" y="48">
     <tspan class="brand-main">Masio</tspan>
     <tspan class="brand-accent">ASM</tspan>
   </text>
