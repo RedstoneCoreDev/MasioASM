@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MasioASM - Documentation</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            400: '#38bdf8',
+                            500: '#06b6d4',
+                            600: '#0284c7',
+                            accent: '#818cf8',
+                            darkBg: '#0a0e17',
+                            cardBg: 'rgba(23, 32, 51, 0.6)'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'JetBrains Mono', 'Consolas', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0e17;
+            color: #f8fafc;
+        }
+        .code-font {
+            font-family: 'Fira Code', monospace;
+        }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-card {
+            background: rgba(23, 32, 51, 0.5);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .sidebar-transition {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="bg-brand-darkBg text-slate-100 min-h-screen flex flex-col antialiased selection:bg-brand-400 selection:text-slate-900">
+
+    <!-- HEADER / NAVBAR -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-slate-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            
+            <div class="flex items-center space-x-4">
+                <!-- SIDEBAR TOGGLE BUTTON -->
+                <button onclick="toggleSidebar()" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors focus:outline-none" title="Toggle Navigation Sidebar">
+                    <i id="sidebar-toggle-icon" class="fa-solid fa-bars text-lg"></i>
+                </button>
+
+                <!-- LOGO -->
+                <a href="index.html" class="flex items-center space-x-3 group">
+                    <span class="font-bold text-lg tracking-tight text-white code-font hidden sm:inline">
+                        Masio<span class="text-sky-400">ASM</span> <span class="text-xs font-sans text-slate-400 font-normal">/ Documentation</span>
+                    </span>
+                </a>
+            </div>
+
+            <!-- RIGHT LINKS -->
+            <div class="flex items-center space-x-4 text-sm font-medium">
+                <a href="index.html" class="text-slate-300 hover:text-sky-400 transition-colors flex items-center gap-1.5">
+                    <i class="fa-solid fa-arrow-left text-xs"></i> Landing Page
+                </a>
+                <a href="https://github.com/RedstoneCoreDev/MasioASM" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors flex items-center gap-2">
+                    <i class="fa-brands fa-github text-base"></i>
+                    <span class="hidden sm:inline">GitHub</span>
+                </a>
+            </div>
+
+        </div>
+    </header>
+
+    <div class="flex-grow flex relative max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- COLLAPSIBLE SIDEBAR (STARTS CLOSED / OFF-SCREEN BY DEFAULT) -->
+        <aside id="doc-sidebar" class="sidebar-transition fixed inset-y-0 left-0 z-40 w-64 bg-slate-950/95 lg:bg-slate-950/80 border-r border-slate-800/80 p-6 pt-20 lg:pt-4 -translate-x-full flex-shrink-0">
+            <div class="sticky top-24 space-y-6 max-h-[calc(100vh-8rem)] overflow-y-auto pr-2">
+                
+                <div>
+                    <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Navigation</h3>
+                    <ul class="space-y-1 text-sm font-medium">
+                        <li><a href="#getting-started" onclick="onNavClick()" class="block px-3 py-1.5 rounded-lg text-slate-300 hover:text-sky-400 hover:bg-slate-800/50 transition-colors">1. Getting Started</a></li>
+                        <li><a href="#features" onclick="onNavClick()" class="block px-3 py-1.5 rounded-lg text-slate-300 hover:text-sky-400 hover:bg-slate-800/50 transition-colors">2. Features</a></li>
+                        <li><a href="#masio-cli" onclick="onNavClick()" class="block px-3 py-1.5 rounded-lg text-slate-300 hover:text-sky-400 hover:bg-slate-800/50 transition-colors">3. MasioCLI</a></li>
+                        <li><a href="#code-style" onclick="onNavClick()" class="block px-3 py-1.5 rounded-lg text-slate-300 hover:text-sky-400 hover:bg-slate-800/50 transition-colors">4. Code Style</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Keywords Quickjump</h3>
+                    <div class="grid grid-cols-2 gap-1.5 text-xs code-font">
+                        <a href="#kw-include" onclick="onNavClick()" class="px-2 py-1 rounded bg-slate-900 text-indigo-400 hover:bg-slate-800">include</a>
+                        <a href="#kw-insert" onclick="onNavClick()" class="px-2 py-1 rounded bg-slate-900 text-cyan-400 hover:bg-slate-800">insert</a>
+                        <a href="#kw-if" onclick="onNavClick()" class="px-2 py-1 rounded bg-slate-900 text-sky-400 hover:bg-slate-800">if</a>
+                        <a href="#kw-loop" onclick="onNavClick()" class="px-2 py-1 rounded bg-slate-900 text-emerald-400 hover:bg-slate-800">loop</a>
+                        <a href="#kw-end" onclick="onNavClick()" class="px-2 py-1 rounded bg-slate-900 text-purple-400 hover:bg-slate-800">end</a>
+                        <a href="#kw-public" onclick="onNavClick()" class="px-2 py-1 rounded bg-slate-900 text-amber-400 hover:bg-slate-800">public</a>
+                        <a href="#kw-private" onclick="onNavClick()" class="px-2 py-1 rounded bg-slate-900 text-rose-400 hover:bg-slate-800">private</a>
+                        <a href="#kw-zero" onclick="onNavClick()" class="px-2 py-1 rounded bg-slate-900 text-teal-400 hover:bg-slate-800">zero</a>
+                        <a href="#kw-fn" onclick="onNavClick()" class="px-2 py-1 rounded bg-slate-900 text-blue-400 hover:bg-slate-800">fn</a>
+                        <a href="#kw-fsetup" onclick="onNavClick()" class="px-2 py-1 rounded bg-slate-900 text-yellow-400 hover:bg-slate-800">FSetup</a>
+                        <a href="#kw-fdestroy" onclick="onNavClick()" class="px-2 py-1 rounded bg-slate-900 text-orange-400 hover:bg-slate-800">FDestroy</a>
+                        <a href="#kw-return" onclick="onNavClick()" class="px-2 py-1 rounded bg-slate-900 text-red-400 hover:bg-slate-800">return</a>
+                        <a href="#kw-print" onclick="onNavClick()" class="px-2 py-1 rounded bg-slate-900 text-green-400 hover:bg-slate-800">print</a>
+                        <a href="#kw-comments" onclick="onNavClick()" class="px-2 py-1 rounded bg-slate-900 text-slate-400 hover:bg-slate-800">comments</a>
+                    </div>
+                </div>
+
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT AREA -->
+        <main id="main-content" class="flex-grow min-w-0 transition-all duration-300 space-y-12">
+
+            <!-- 1. GETTING STARTED -->
+            <section id="getting-started" class="scroll-mt-24">
+                <h1 class="text-3xl font-extrabold text-white tracking-tight">Getting Started</h1>
+                <p class="mt-3 text-slate-400 text-base leading-relaxed">
+                    MasioASM is designed to make learning assembly easier by shortening tedious register setups, function framing, control structures, and boilerplate while outputting standard NASM code.
+                </p>
+
+                <div class="mt-4 p-4 rounded-xl bg-slate-900/80 border border-slate-800 text-xs text-slate-300 flex items-start gap-3">
+                    <i class="fa-brands fa-linux text-sky-400 text-xl mt-0.5"></i>
+                    <div>
+                        <strong class="text-white">Linux-First Project:</strong> MasioASM is natively targeted for x86_64 Linux systems. Build tools or wrappers for Windows or macOS are community-driven or AI-generated wrappers.
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. FEATURES -->
+            <section id="features" class="scroll-mt-24 pt-6 border-t border-slate-800/80 space-y-8">
+                <div>
+                    <h2 class="text-2xl font-bold text-white tracking-tight">Features & Keyword Reference</h2>
+                    <p class="mt-1 text-sm text-slate-400">Every keyword supported by MasioASM, explained with side-by-side comparison with translated NASM assembly.</p>
+                </div>
+
+                <!-- INCLUDE -->
+                <div id="kw-include" class="glass-card p-5 rounded-2xl border border-slate-800 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-base font-bold text-indigo-400 code-font">include</h3>
+                        <span class="text-xs bg-indigo-500/10 text-indigo-300 px-2.5 py-0.5 rounded-full border border-indigo-500/20">File Linking</span>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Transforms the target <code class="code-font text-sky-300">.masio</code> file into NASM, compiles it, and links it with the main executable.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs code-font">
+                        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                            <span class="text-slate-500 block mb-1">// MasioASM</span>
+                            <span class="text-indigo-400">include</span> <span class="text-emerald-400">"math.masio"</span>
+                        </div>
+                        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                            <span class="text-slate-500 block mb-1">; Generated NASM / Linker Directive</span>
+                            <span class="text-slate-400">; Transformed math.masio -> math.o & linked</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- INSERT -->
+                <div id="kw-insert" class="glass-card p-5 rounded-2xl border border-slate-800 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-base font-bold text-cyan-400 code-font">insert</h3>
+                        <span class="text-xs bg-cyan-500/10 text-cyan-300 px-2.5 py-0.5 rounded-full border border-cyan-500/20">Direct Source Inlining</span>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Inserts needed functions from another file into the current transformed NASM file. Source <code class="code-font text-sky-300">.masio</code> files are never altered; only generated NASM code changes.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs code-font">
+                        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                            <span class="text-slate-500 block mb-1">// MasioASM</span>
+                            <span class="text-cyan-400">insert</span> <span class="text-emerald-400">"utils.masio"</span>
+                        </div>
+                        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                            <span class="text-slate-500 block mb-1">; Generated NASM</span>
+                            <span class="text-slate-400">; [Contents of transformed utils.masio inserted directly here]</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- IF & END -->
+                <div id="kw-if" class="glass-card p-5 rounded-2xl border border-slate-800 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-base font-bold text-sky-400 code-font">if</h3>
+                        <span class="text-xs bg-sky-500/10 text-sky-300 px-2.5 py-0.5 rounded-full border border-sky-500/20">Conditionals</span>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Standard conditional statement that auto-generates jump labels and comparisons. Ends with the <code class="code-font text-purple-400">end</code> keyword.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs code-font">
+                        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                            <span class="text-slate-500 block mb-1">// MasioASM</span>
+                            <span class="text-sky-400">if</span> rax == 0:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;mov rdi, 1<br>
+                            <span class="text-purple-400">end</span>
+                        </div>
+                        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                            <span class="text-slate-500 block mb-1">; Generated NASM</span>
+                            cmp rax, 0<br>
+                            jne ._if_end_1<br>
+                            mov rdi, 1<br>
+                            ._if_end_1:
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LOOP -->
+                <div id="kw-loop" class="glass-card p-5 rounded-2xl border border-slate-800 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-base font-bold text-emerald-400 code-font">loop</h3>
+                        <span class="text-xs bg-emerald-500/10 text-emerald-300 px-2.5 py-0.5 rounded-full border border-emerald-500/20">Iteration</span>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Loops continuously until the expression becomes false. Ends with the <code class="code-font text-purple-400">end</code> keyword.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs code-font">
+                        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                            <span class="text-slate-500 block mb-1">// MasioASM</span>
+                            <span class="text-emerald-400">loop</span> rcx > 0:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;dec rcx<br>
+                            <span class="text-purple-400">end</span>
+                        </div>
+                        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                            <span class="text-slate-500 block mb-1">; Generated NASM</span>
+                            ._loop_start_1:<br>
+                            cmp rcx, 0<br>
+                            jle ._loop_end_1<br>
+                            dec rcx<br>
+                            jmp ._loop_start_1<br>
+                            ._loop_end_1:
+                        </div>
+                    </div>
+                </div>
+
+                <!-- END -->
+                <div id="kw-end" class="glass-card p-5 rounded-2xl border border-slate-800 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-base font-bold text-purple-400 code-font">end</h3>
+                        <span class="text-xs bg-purple-500/10 text-purple-300 px-2.5 py-0.5 rounded-full border border-purple-500/20">Block Closure</span>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Closes function definitions (<code class="code-font text-blue-400">fn</code>), conditionals (<code class="code-font text-sky-400">if</code>), and loop structures (<code class="code-font text-emerald-400">loop</code>).
+                    </p>
+                </div>
+
+                <!-- PUBLIC & PRIVATE -->
+                <div id="kw-public" class="glass-card p-5 rounded-2xl border border-slate-800 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-base font-bold text-amber-400 code-font">public / private</h3>
+                        <span class="text-xs bg-amber-500/10 text-amber-300 px-2.5 py-0.5 rounded-full border border-amber-500/20">Function Visibility</span>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Functions are <strong>private by default</strong>. Prefix with <code class="code-font text-amber-400">public</code> to export symbols globally for external linking via <code class="code-font text-indigo-400">include</code>.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs code-font">
+                        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                            <span class="text-slate-500 block mb-1">// MasioASM</span>
+                            <span class="text-amber-400">public</span> <span class="text-blue-400">fn</span> add_num:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;add rax, rbx<br>
+                            <span class="text-purple-400">end</span>
+                        </div>
+                        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                            <span class="text-slate-500 block mb-1">; Generated NASM</span>
+                            global add_num<br>
+                            add_num:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;add rax, rbx<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;ret
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ZERO -->
+                <div id="kw-zero" class="glass-card p-5 rounded-2xl border border-slate-800 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-base font-bold text-teal-400 code-font">zero</h3>
+                        <span class="text-xs bg-teal-500/10 text-teal-300 px-2.5 py-0.5 rounded-full border border-teal-500/20">Register Clearing</span>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Shortened keyword for zeroing out a register using the idiomatic self-XOR instruction.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs code-font">
+                        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                            <span class="text-slate-500 block mb-1">// MasioASM</span>
+                            <span class="text-teal-400">zero</span> rax
+                        </div>
+                        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                            <span class="text-slate-500 block mb-1">; Generated NASM</span>
+                            xor rax, rax
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FN, FSETUP, FDESTROY -->
+                <div id="kw-fn" class="glass-card p-5 rounded-2xl border border-slate-800 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-base font-bold text-blue-400 code-font">fn / FSetup / FDestroy</h3>
+                        <span class="text-xs bg-blue-500/10 text-blue-300 px-2.5 py-0.5 rounded-full border border-blue-500/20">Functions & Framing</span>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        <code class="code-font text-blue-400">fn</code> declares a function label. <code class="code-font text-yellow-400">FSetup</code> handles stack frame allocation (<code class="code-font text-slate-300">push rbp; mov rbp, rsp</code>), and <code class="code-font text-orange-400">FDestroy</code> cleans up (<code class="code-font text-slate-300">mov rsp, rbp; pop rbp</code>).
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs code-font">
+                        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                            <span class="text-slate-500 block mb-1">// MasioASM</span>
+                            <span class="text-blue-400">fn</span> calculate:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-yellow-400">FSetup</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-orange-400">FDestroy</span><br>
+                            <span class="text-purple-400">end</span>
+                        </div>
+                        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                            <span class="text-slate-500 block mb-1">; Generated NASM</span>
+                            calculate:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;push rbp<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;mov rbp, rsp<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;mov rsp, rbp<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;pop rbp
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RETURN -->
+                <div id="kw-return" class="glass-card p-5 rounded-2xl border border-slate-800 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-base font-bold text-red-400 code-font">return</h3>
+                        <span class="text-xs bg-red-500/10 text-red-300 px-2.5 py-0.5 rounded-full border border-red-500/20">Context-Aware Exit</span>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Intelligently determines exit vs return logic based on function context:
+                    </p>
+                    <ul class="list-disc list-inside text-xs text-slate-400 space-y-1">
+                        <li><strong class="text-slate-200">Inside _start (no value):</strong> Zeroes <code class="code-font text-amber-300">rdi</code> (status 0), sets <code class="code-font text-amber-300">rax</code> to 60 (<code class="code-font text-sky-300">sys_exit</code>), and calls <code class="code-font text-sky-300">syscall</code>.</li>
+                        <li><strong class="text-slate-200">Inside _start (value given):</strong> Sets <code class="code-font text-amber-300">rdi</code> to value, sets <code class="code-font text-amber-300">rax</code> to 60, and calls <code class="code-font text-sky-300">syscall</code>.</li>
+                        <li><strong class="text-slate-200">Subroutine (no value):</strong> Emits NASM <code class="code-font text-sky-300">ret</code> instruction.</li>
+                        <li><strong class="text-slate-200">Subroutine (value given):</strong> Moves value into <code class="code-font text-amber-300">rax</code> return register and emits <code class="code-font text-sky-300">ret</code>.</li>
+                    </ul>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs code-font">
+                        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                            <span class="text-slate-500 block mb-1">// MasioASM (_start vs subroutine)</span>
+                            <span class="text-blue-400">fn</span> _start:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-red-400">return</span> 0<br>
+                            <span class="text-purple-400">end</span>
+                        </div>
+                        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                            <span class="text-slate-500 block mb-1">; Generated NASM (sys_exit)</span>
+                            _start:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;mov rdi, 0<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;mov rax, 60<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;syscall
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PRINT -->
+                <div id="kw-print" class="glass-card p-5 rounded-2xl border border-slate-800 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-base font-bold text-green-400 code-font">print</h3>
+                        <span class="text-xs bg-green-500/10 text-green-300 px-2.5 py-0.5 rounded-full border border-green-500/20">String I/O Helper</span>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Auto-generates string constants into the output NASM <code class="code-font text-purple-300">section .data</code> and inserts the necessary Linux <code class="code-font text-sky-300">sys_write</code> syscall routines.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs code-font">
+                        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                            <span class="text-slate-500 block mb-1">// MasioASM</span>
+                            <span class="text-green-400">print</span> <span class="text-emerald-400">"Hello World!"</span>
+                        </div>
+                        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                            <span class="text-slate-500 block mb-1">; Generated NASM Data & Syscall</span>
+                            section .data<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;msg_1 db "Hello World!", 10<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;msg_1_len equ $-msg_1<br>
+                            section .text<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;mov rax, 1 &nbsp;; sys_write<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;mov rdi, 1 &nbsp;; stdout<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;mov rsi, msg_1<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;mov rdx, msg_1_len<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;syscall
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COMMENTS -->
+                <div id="kw-comments" class="glass-card p-5 rounded-2xl border border-slate-800 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-base font-bold text-slate-400 code-font">comments</h3>
+                        <span class="text-xs bg-slate-500/10 text-slate-300 px-2.5 py-0.5 rounded-full border border-slate-500/20">Multi-Syntax Support</span>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        MasioASM accepts standard assembly, C, Python, Bash, and Lua comment syntaxes:
+                    </p>
+                    <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 text-xs code-font text-slate-400 space-y-1">
+                        <div><span class="text-sky-400">;</span> Assembly style comment</div>
+                        <div><span class="text-sky-400">//</span> C / C++ style comment</div>
+                        <div><span class="text-sky-400">#</span> Python / Bash style comment</div>
+                        <div><span class="text-sky-400">--</span> Lua style comment</div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- 3. MASIO CLI -->
+            <section id="masio-cli" class="scroll-mt-24 pt-6 border-t border-slate-800/80">
+                <h2 class="text-2xl font-bold text-white tracking-tight">MasioCLI</h2>
+                <p class="mt-2 text-sm text-slate-400">Command line toolchain usage for building and running project files.</p>
+
+                <div class="mt-4 p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs code-font space-y-3">
+                    <div>
+                        <span class="text-slate-500 block"># Transform .masio into .asm and compile binary</span>
+                        <span class="text-sky-300">$ masio build main.masio</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 block"># Transform, compile, and run immediately</span>
+                        <span class="text-sky-300">$ masio run main.masio</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. CODE STYLE -->
+            <section id="code-style" class="scroll-mt-24 pt-6 border-t border-slate-800/80">
+                <h2 class="text-2xl font-bold text-white tracking-tight">Code Style</h2>
+                <p class="mt-2 text-sm text-slate-400">
+                    Define specific code style rules at the top of your files to enforce formatting guidelines during pre-processing.
+                </p>
+
+                <div class="mt-4 p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs code-font text-slate-300">
+                    <span class="text-slate-500 block">// Top-of-file style configuration directive placeholder</span>
+                    <span class="text-purple-400">style</span> <span class="text-amber-300">enforce_indent</span> = <span class="text-emerald-400">4_spaces</span><br>
+                    <span class="text-purple-400">style</span> <span class="text-amber-300">explicit_end</span> = <span class="text-emerald-400">true</span>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-800/80 bg-slate-950/80 py-6 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <span>MasioASM Documentation &bull; BSD 3-Clause License</span>
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800 text-slate-400">
+                <i class="fa-solid fa-robot text-sky-400"></i> AI Generated Website
+            </span>
+        </div>
+    </footer>
+
+    <!-- SIDEBAR INTERACTION SCRIPT -->
+    <script>
+        // Sidebar starts CLOSED by default as requested
+        let sidebarOpen = false;
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('doc-sidebar');
+            const icon = document.getElementById('sidebar-toggle-icon');
+            
+            sidebarOpen = !sidebarOpen;
+
+            if (sidebarOpen) {
+                sidebar.classList.remove('-translate-x-full');
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-xmark');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                icon.classList.remove('fa-xmark');
+                icon.classList.add('fa-bars');
+            }
+        }
+
+        // Auto-close sidebar on smaller screens when clicking links
+        function onNavClick() {
+            if (window.innerWidth < 1024 && sidebarOpen) {
+                toggleSidebar();
+            }
+        }
+    </script>
+</body>
+</html>
