@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MasioASM - Assembly Macro Preprocessor</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            400: '#38bdf8',
+                            500: '#06b6d4',
+                            600: '#0284c7',
+                            accent: '#818cf8',
+                            darkBg: '#0a0e17',
+                            cardBg: 'rgba(23, 32, 51, 0.6)'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'JetBrains Mono', 'Consolas', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0e17;
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
+        .code-font {
+            font-family: 'Fira Code', monospace;
+        }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-card {
+            background: rgba(23, 32, 51, 0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            border-color: rgba(56, 189, 248, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px -10px rgba(56, 189, 248, 0.2);
+        }
+        .bg-grid-pattern {
+            background-size: 40px 40px;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        }
+    </style>
+</head>
+<body class="bg-brand-darkBg text-slate-100 min-h-screen flex flex-col relative antialiased selection:bg-brand-400 selection:text-slate-900">
+
+    <!-- Background Pattern & Glow FX -->
+    <div class="fixed inset-0 bg-grid-pattern pointer-events-none z-0"></div>
+    <div class="fixed top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-cyan-500/10 blur-[120px] pointer-events-none z-0"></div>
+    <div class="fixed bottom-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-indigo-500/10 blur-[120px] pointer-events-none z-0"></div>
+
+    <!-- NAVIGATION HEADER -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-slate-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            
+            <!-- LOGO PLACEHOLDER (To swap with image, replace div with: <img src="logo.png" alt="MasioASM" class="h-8 w-auto">) -->
+            <a href="#" class="flex items-center space-x-3 group">
+                <div id="logo-placeholder" class="w-9 h-9 rounded-lg bg-gradient-to-br from-sky-400 to-indigo-600 flex items-center justify-center font-mono font-bold text-slate-900 text-lg shadow-lg group-hover:scale-105 transition-transform">
+                    M
+                </div>
+                <span class="font-bold text-xl tracking-tight text-white code-font">
+                    Masio<span class="text-sky-400">ASM</span>
+                </span>
+            </a>
+
+            <!-- NAVIGATION LINKS -->
+            <nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-300">
+                <a href="#demo" class="hover:text-sky-400 transition-colors">Demo</a>
+                <a href="documentation.html#features" class="hover:text-sky-400 transition-colors">Features</a>
+                <a href="documentation.html" class="hover:text-sky-400 transition-colors">Documentation</a>
+                <a href="https://github.com/RedstoneCoreDev/MasioASM" target="_blank" rel="noopener noreferrer" class="hover:text-sky-400 transition-colors flex items-center gap-1.5">
+                    GitHub <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                </a>
+            </nav>
+
+            <!-- STAR REPO BUTTON -->
+            <div class="flex items-center space-x-3">
+                <a href="https://github.com/RedstoneCoreDev/MasioASM" target="_blank" rel="noopener noreferrer" 
+                   class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-all">
+                    <i class="fa-brands fa-github text-base"></i>
+                    <span>Star Repo</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow z-10">
+        
+        <!-- HERO SECTION -->
+        <section class="relative pt-12 pb-16 md:pt-20 md:pb-24">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                    
+                    <!-- HERO LEFT COLUMN: Title, Goal, OS Notice, Buttons -->
+                    <div class="lg:col-span-6 text-left">
+                        
+                        <!-- TITLE (No text above this title) -->
+                        <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white tracking-tight leading-tight">
+                            MasioASM
+                        </h1>
+
+                        <!-- GOAL STATEMENT -->
+                        <p class="mt-4 text-xl font-medium text-sky-400">
+                            Learn assembly while writing cleaner, shorter code.
+                        </p>
+
+                        <!-- DESCRIPTION -->
+                        <p class="mt-4 text-base text-slate-300 leading-relaxed">
+                            A lightweight assembly macro preprocessor designed to simplify low-level syntax without taking away system control. Powered by the <code class="code-font bg-slate-800 px-2 py-0.5 rounded text-sky-300">masio</code> CLI.
+                        </p>
+
+                        <!-- LINUX FIRST & OS NOTICE -->
+                        <div class="mt-6 p-3.5 rounded-xl bg-slate-900/80 border border-slate-800/80 text-xs text-slate-400 flex items-start gap-3">
+                            <i class="fa-brands fa-linux text-sky-400 text-lg mt-0.5"></i>
+                            <div>
+                                <span class="text-slate-200 font-semibold">Linux-First Toolchain:</span>
+                                Designed primary for Linux environments. Cross-compilation features for Windows/macOS exist via community or AI-generated tool bindings, which are experimental.
+                            </div>
+                        </div>
+
+                        <!-- ACTION BUTTONS UNDER HERO -->
+                        <div id="download-section" class="mt-8 flex flex-wrap items-center gap-4">
+                            <!-- DOWNLOAD BUTTON (Points to GitHub Releases) -->
+                            <a href="https://github.com/RedstoneCoreDev/MasioASM/releases" target="_blank" rel="noopener noreferrer"
+                               class="px-6 py-3 rounded-xl font-semibold bg-sky-500 hover:bg-sky-400 text-slate-950 shadow-lg shadow-sky-500/20 transition-all flex items-center gap-2">
+                                <i class="fa-solid fa-download"></i>
+                                <span>Download Release</span>
+                            </a>
+                            
+                            <!-- DOCUMENTATION LINK -->
+                            <a href="documentation.html" 
+                               class="px-6 py-3 rounded-xl font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-all flex items-center gap-2">
+                                <i class="fa-solid fa-book text-sky-400"></i>
+                                <span>Documentation</span>
+                            </a>
+
+                            <!-- GITHUB LINK -->
+                            <a href="https://github.com/RedstoneCoreDev/MasioASM" target="_blank" rel="noopener noreferrer" 
+                               class="px-6 py-3 rounded-xl font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-all flex items-center gap-2">
+                                <i class="fa-brands fa-github"></i>
+                                <span>Source</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- HERO RIGHT COLUMN: TERMINAL PREVIEW -->
+                    <div class="lg:col-span-6">
+                        <div class="glass-panel rounded-2xl overflow-hidden shadow-2xl border border-slate-700/60">
+                            <!-- Terminal Header -->
+                            <div class="bg-slate-900/90 px-4 py-3 border-b border-slate-800 flex items-center justify-between">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-3 h-3 rounded-full bg-rose-500/80"></div>
+                                    <div class="w-3 h-3 rounded-full bg-amber-500/80"></div>
+                                    <div class="w-3 h-3 rounded-full bg-emerald-500/80"></div>
+                                </div>
+                                <span class="text-xs text-slate-400 font-mono">main.masio &rarr; NASM</span>
+                                <button onclick="copyTerminalCode()" class="text-xs text-slate-400 hover:text-sky-400 transition-colors flex items-center gap-1">
+                                    <i class="fa-regular fa-copy"></i> Copy
+                                </button>
+                            </div>
+                            
+                            <!-- Terminal Content -->
+                            <div class="p-4 bg-slate-950/80 code-font text-xs sm:text-sm overflow-x-auto min-h-[260px]">
+                                <pre id="terminal-code-block" class="text-slate-300"><code><span class="text-slate-500">; MasioASM Syntax Preview</span>
+<span class="text-purple-400">public</span> <span class="text-blue-400">func</span> <span class="text-yellow-300">print_msg</span>:
+    <span class="text-sky-400">mov</span> <span class="text-amber-300">rax</span>, <span class="text-emerald-400">1</span>
+    <span class="text-sky-400">mov</span> <span class="text-amber-300">rdi</span>, <span class="text-emerald-400">1</span>
+    <span class="text-sky-400">syscall</span>
+<span class="text-purple-400">end</span>
+
+<span class="text-indigo-400">if</span> <span class="text-amber-300">rax</span> == <span class="text-emerald-400">0</span>:
+    <span class="text-sky-400">call</span> <span class="text-yellow-300">print_msg</span>
+<span class="text-purple-400">end</span></code></pre>
+                            </div>
+
+                            <!-- CLI Command Footer -->
+                            <div class="bg-slate-900/60 px-4 py-2.5 border-t border-slate-800/80 text-xs code-font text-slate-400 flex items-center justify-between">
+                                <span class="flex items-center gap-2">
+                                    <span class="text-emerald-400">$</span> masio build main.masio
+                                </span>
+                                <span class="text-slate-500">x86_64-linux</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- SEPARATE DEMO SECTION (COMPLETELY ISOLATED CODE BLOCK) -->
+        <section id="demo" class="py-16 bg-slate-900/40 border-y border-slate-800/60">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div class="text-center max-w-2xl mx-auto mb-10">
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">Code Comparison</h2>
+                    <p class="mt-2 text-sm text-slate-400">Compare high-level MasioASM code with its transformed NASM output.</p>
+                </div>
+
+                <!-- Demo Container -->
+                <div class="glass-panel rounded-2xl p-4 sm:p-6 border border-slate-700/60 max-w-4xl mx-auto">
+                    
+                    <!-- Tabs Header -->
+                    <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-800">
+                        <div class="flex space-x-2">
+                            <button onclick="switchTab('tab-if')" id="btn-tab-if" class="demo-tab-btn px-3 py-1.5 rounded-lg text-xs font-mono font-medium bg-sky-500/20 text-sky-300 border border-sky-500/30">
+                                conditional.masio
+                            </button>
+                            <button onclick="switchTab('tab-loop')" id="btn-tab-loop" class="demo-tab-btn px-3 py-1.5 rounded-lg text-xs font-mono font-medium text-slate-400 hover:text-slate-200">
+                                loop.masio
+                            </button>
+                            <button onclick="switchTab('tab-library')" id="btn-tab-library" class="demo-tab-btn px-3 py-1.5 rounded-lg text-xs font-mono font-medium text-slate-400 hover:text-slate-200">
+                                library.masio
+                            </button>
+                        </div>
+                        <div class="text-xs text-slate-500 font-mono">CLI: <span class="text-sky-400">masio</span></div>
+                    </div>
+
+                    <!-- Tab Contents -->
+                    <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Source MasioASM Code -->
+                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800/80">
+                            <div class="text-xs font-mono text-slate-400 mb-2 flex items-center justify-between">
+                                <span>MASIO INPUT</span>
+                                <span class="text-sky-400">Shorter Syntax</span>
+                            </div>
+                            <pre id="demo-source-code" class="code-font text-xs text-slate-300 overflow-x-auto min-h-[160px]"><code><!-- Populated by JavaScript --></code></pre>
+                        </div>
+
+                        <!-- Transformed NASM Output -->
+                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800/80">
+                            <div class="text-xs font-mono text-slate-400 mb-2 flex items-center justify-between">
+                                <span>NASM OUTPUT GENERATED</span>
+                                <span class="text-indigo-400">Unchanged Source File</span>
+                            </div>
+                            <pre id="demo-output-code" class="code-font text-xs text-slate-300 overflow-x-auto min-h-[160px]"><code><!-- Populated by JavaScript --></code></pre>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- FEATURES SECTION (MODULAR GRID - EASILY COPY/PASTE CARDS) -->
+        <section id="features" class="py-16 md:py-24">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div class="text-center max-w-2xl mx-auto mb-16">
+                    <h2 class="text-3xl font-bold text-white tracking-tight">Features & Architecture</h2>
+                    <p class="mt-3 text-base text-slate-400">Built to speed up low-level development while keeping learning straightforward.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                    <!-- FEATURE CARD 1: Educational Goal -->
+                    <a href="documentation.html#goal" class="glass-card p-6 rounded-2xl flex flex-col justify-between group">
+                        <div>
+                            <div class="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/20 text-sky-400 flex items-center justify-center text-lg mb-4 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-graduation-cap"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-white mb-2">Learn & Shorten</h3>
+                            <p class="text-sm text-slate-400 leading-relaxed">
+                                Lowering the entry barrier for assembly. Reduces redundant assembly boilerplate without hiding underlying register mechanics.
+                            </p>
+                        </div>
+                        <div class="mt-6 text-xs text-sky-400 font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                            Read in Docs <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                        </div>
+                    </a>
+
+                    <!-- FEATURE CARD 2: Public / Private Library System -->
+                    <a href="documentation.html#include" class="glass-card p-6 rounded-2xl flex flex-col justify-between group">
+                        <div>
+                            <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center text-lg mb-4 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-file-import"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-white mb-2">Include System</h3>
+                            <p class="text-sm text-slate-400 leading-relaxed">
+                                Compile and link separate files into library modules. Explicitly declare functions as <code class="text-purple-300 code-font">public</code> for external access, or keep them <code class="text-purple-300 code-font">private</code> by default.
+                            </p>
+                        </div>
+                        <div class="mt-6 text-xs text-indigo-400 font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                            Read in Docs <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                        </div>
+                    </a>
+
+                    <!-- FEATURE CARD 3: Insert System -->
+                    <a href="documentation.html#insert" class="glass-card p-6 rounded-2xl flex flex-col justify-between group">
+                        <div>
+                            <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center text-lg mb-4 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-code-merge"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-white mb-2">Insert System</h3>
+                            <p class="text-sm text-slate-400 leading-relaxed">
+                                Directly insert required functions from external files into output NASM source during transformation. Original <code class="code-font text-sky-300">.masio</code> source files are never altered.
+                            </p>
+                        </div>
+                        <div class="mt-6 text-xs text-cyan-400 font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                            Read in Docs <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                        </div>
+                    </a>
+
+                    <!-- FEATURE CARD 4: If Statements Syntax -->
+                    <a href="documentation.html#conditionals" class="glass-card p-6 rounded-2xl flex flex-col justify-between group">
+                        <div>
+                            <div class="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center text-lg mb-4 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-code-branch"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-white mb-2">If Conditionals</h3>
+                            <p class="text-sm text-slate-400 leading-relaxed">
+                                Cleaner condition blocks using readable syntax: <br/>
+                                <code class="code-font text-xs text-sky-300">if condition: ... end</code>. Eliminates manual label clutter.
+                            </p>
+                        </div>
+                        <div class="mt-6 text-xs text-purple-400 font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                            Read in Docs <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                        </div>
+                    </a>
+
+                    <!-- FEATURE CARD 5: Loop Statements Syntax -->
+                    <a href="documentation.html#loops" class="glass-card p-6 rounded-2xl flex flex-col justify-between group">
+                        <div>
+                            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center text-lg mb-4 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-rotate"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-white mb-2">Loop Structures</h3>
+                            <p class="text-sm text-slate-400 leading-relaxed">
+                                Express iterative logic straightforwardly with <br/>
+                                <code class="code-font text-xs text-emerald-300">loop condition: ... end</code>. Converts down to fast NASM instructions.
+                            </p>
+                        </div>
+                        <div class="mt-6 text-xs text-emerald-400 font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                            Read in Docs <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                        </div>
+                    </a>
+
+                    <!-- FEATURE CARD 6: masio CLI Tool -->
+                    <a href="documentation.html#cli" class="glass-card p-6 rounded-2xl flex flex-col justify-between group">
+                        <div>
+                            <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center text-lg mb-4 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-terminal"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-white mb-2">Clean CLI Interface</h3>
+                            <p class="text-sm text-slate-400 leading-relaxed">
+                                Single binary command line utility <code class="code-font text-amber-300">masio</code> handles transformation, compiling, and linking seamlessly.
+                            </p>
+                        </div>
+                        <div class="mt-6 text-xs text-amber-400 font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                            Read in Docs <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                        </div>
+                    </a>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-800/80 bg-slate-950/80 py-8 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+            
+            <!-- LICENSE & PROJECT NOTICE -->
+            <div>
+                <p class="text-slate-400 font-medium">MasioASM &bull; BSD 3-Clause License</p>
+                <p class="mt-1">Linux-first assembly macro toolchain.</p>
+            </div>
+
+            <!-- AI GENERATED NOTICE (As requested) -->
+            <div class="text-center md:text-right">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800 text-slate-400">
+                    <i class="fa-solid fa-robot text-sky-400"></i> AI Generated Website
+                </span>
+            </div>
+
+        </div>
+    </footer>
+
+    <!-- DEMO SCRIPT -->
+    <script>
+        // Sample code blocks for demo section
+        const demoData = {
+            'tab-if': {
+                masio: `; Conditional Example\nif rax == 0:\n    call print_msg\nend`,
+                nasm: `; Transformed NASM Output\ncmp rax, 0\njne ._L1\ncall print_msg\n._L1:`
+            },
+            'tab-loop': {
+                masio: `; Loop Example\nloop rcx > 0:\n    dec rcx\nend`,
+                nasm: `; Transformed NASM Output\n._loop_start:\ncmp rcx, 0\njle ._loop_end\ndec rcx\njmp ._loop_start\n._loop_end:`
+            },
+            'tab-library': {
+                masio: `; Include / Insert Example\ninclude math_lib\n\npublic func add_val:\n    add rax, rbx\nend`,
+                nasm: `; NASM Header & Links\nglobal add_val\nadd_val:\n    add rax, rbx\n    ret`
+            }
+        };
+
+        function switchTab(tabId) {
+            // Update active tab buttons
+            document.querySelectorAll('.demo-tab-btn').forEach(btn => {
+                btn.classList.remove('bg-sky-500/20', 'text-sky-300', 'border', 'border-sky-500/30');
+                btn.classList.add('text-slate-400');
+            });
+            
+            const activeBtn = document.getElementById('btn-' + tabId);
+            if (activeBtn) {
+                activeBtn.classList.add('bg-sky-500/20', 'text-sky-300', 'border', 'border-sky-500/30');
+                activeBtn.classList.remove('text-slate-400');
+            }
+
+            // Update source code display
+            if (demoData[tabId]) {
+                document.getElementById('demo-source-code').textContent = demoData[tabId].masio;
+                document.getElementById('demo-output-code').textContent = demoData[tabId].nasm;
+            }
+        }
+
+        // Copy Terminal Code to Clipboard
+        function copyTerminalCode() {
+            const codeText = "public func print_msg:\n    mov rax, 1\n    mov rdi, 1\n    syscall\nend\n\nif rax == 0:\n    call print_msg\nend";
+            
+            // Clipboard fallback mechanism
+            const el = document.createElement('textarea');
+            el.value = codeText;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+
+            alert('Code copied to clipboard!');
+        }
+
+        // Initialize default tab on load
+        window.onload = function() {
+            switchTab('tab-if');
+        };
+    </script>
+</body>
+</html>
