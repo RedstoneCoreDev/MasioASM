@@ -1,4 +1,7 @@
-# MasioASM
+<p align="center">
+  <img src="logo.svg" alt="MasioASM Logo" width="300">
+</p>
+
 MasioASM is a custom macro preprocessor for `.masio` files.
 It transforms MasioASM code into standard NASM code.
 Using macros, it reduces code and keeps it simple and gives extra functionality (soon more).
